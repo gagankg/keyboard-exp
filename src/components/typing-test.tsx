@@ -501,7 +501,7 @@ export default function TypingTest() {
           </div>
         </div>
 
-        <div className="flex justify-center overflow-x-auto">
+        <div className="flex justify-center overflow-x-auto py-8">
           <Keyboard
             theme={keyboardTheme}
             enableSound={soundEnabled}
