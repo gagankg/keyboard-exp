@@ -477,25 +477,6 @@ export default function TypingTest() {
         )}
       >
         <div className="flex items-center justify-between mb-4">
-          <p
-            className={cn(
-              "text-[10px] tracking-widest",
-              isDark ? "text-white/25" : "text-black/25"
-            )}
-          >
-            KEYBOARD SPONSORED BY{" "}
-            <a
-              href="https://keyb.himan.me/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={cn(
-                "underline underline-offset-2",
-                isDark ? "text-white/50" : "text-black/50"
-              )}
-            >
-              HIMANHACKS
-            </a>
-          </p>
           <div className="flex gap-1">
             {(
               ["classic", "mint", "royal", "dolch", "sand", "scarlet"] as KeyboardThemeName[]
