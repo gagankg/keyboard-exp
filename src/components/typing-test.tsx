@@ -43,6 +43,7 @@ export default function TypingTest() {
   const [words, setWords] = useState<string[]>([]);
   const [typed, setTyped] = useState<string[]>([]);
   const [mistakes, setMistakes] = useState(0);
+  const [totalKeystrokes, setTotalKeystrokes] = useState(0);
   const [wrongWordSet, setWrongWordSet] = useState<Set<number>>(new Set());
   const [started, setStarted] = useState(false);
   const [finished, setFinished] = useState(false);
@@ -93,6 +94,7 @@ export default function TypingTest() {
     setWords(generateWords(150));
       setTyped([]);
       setMistakes(0);
+      setTotalKeystrokes(0);
       setWrongWordSet(new Set());
       setStarted(false);
       setFinished(false);
@@ -190,6 +192,7 @@ export default function TypingTest() {
       setLastTypedInfo({ code: e.code, correct: isCorrect });
       lastTypedTimeoutRef.current = setTimeout(() => setLastTypedInfo(null), 400);
 
+      setTotalKeystrokes((prev) => prev + 1);
       setTyped((prev) => [...prev, e.key]);
     };
 
@@ -210,7 +213,7 @@ export default function TypingTest() {
     ? Math.round((typed.length / 5) / (duration / 60))
     : null;
   const accuracy = finished
-    ? Math.round(((typed.length - mistakes) / Math.max(typed.length, 1)) * 100)
+    ? totalKeystrokes === 0 ? 0 : Math.round(((totalKeystrokes - mistakes) / totalKeystrokes) * 100)
     : null;
 
   const chars = Array.from(fullText);
