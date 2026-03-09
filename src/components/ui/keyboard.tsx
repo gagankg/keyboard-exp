@@ -57,6 +57,8 @@ export interface KeyboardProps {
   enableSound?: boolean;
   soundUrl?: string;
   onKeyEvent?: (event: KeyboardInteractionEvent) => void;
+  activeKeyCode?: string;
+  lastTypedInfo?: { code: string; correct: boolean };
 }
 
 export function Keyboard({
@@ -66,6 +68,8 @@ export function Keyboard({
   enableHaptics = true,
   soundUrl = "/sounds/sound.ogg",
   onKeyEvent,
+  activeKeyCode,
+  lastTypedInfo,
 }: KeyboardProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -77,6 +81,8 @@ export function Keyboard({
       enableHaptics={enableHaptics}
       soundUrl={soundUrl}
       onKeyEvent={onKeyEvent}
+      activeKeyCode={activeKeyCode}
+      lastTypedInfo={lastTypedInfo}
     >
       <div ref={containerRef} className={cn("inline-block", className)}>
         <KeyboardLayout />
@@ -99,6 +105,8 @@ interface KeyboardContextType {
   pressKey: (keyCode: string, source: KeyboardEventSource) => void;
   releaseKey: (keyCode: string, source: KeyboardEventSource) => void;
   releaseAllKeys: (source?: KeyboardEventSource) => void;
+  activeKeyCode?: string;
+  lastTypedInfo?: { code: string; correct: boolean };
 }
 
 const KeyboardContext = createContext<KeyboardContextType | null>(null);
@@ -119,6 +127,8 @@ interface KeyboardProviderProps {
   enableHaptics: boolean;
   soundUrl: string;
   onKeyEvent?: (event: KeyboardInteractionEvent) => void;
+  activeKeyCode?: string;
+  lastTypedInfo?: { code: string; correct: boolean };
 }
 
 function KeyboardProvider({
@@ -129,6 +139,8 @@ function KeyboardProvider({
   enableHaptics,
   soundUrl,
   onKeyEvent,
+  activeKeyCode,
+  lastTypedInfo,
 }: KeyboardProviderProps) {
   const audioContextRef = useRef<AudioContext | null>(null);
   const audioBufferRef = useRef<AudioBuffer | null>(null);
@@ -356,6 +368,8 @@ function KeyboardProvider({
         pressKey,
         releaseKey,
         releaseAllKeys,
+        activeKeyCode,
+        lastTypedInfo,
       }}
     >
       {children}
@@ -667,8 +681,12 @@ function Key({
   className,
   keyCode,
 }: KeyProps) {
-  const { themeName, pressedKeys, pressKey, releaseKey, triggerPointerHaptic } = useKeyboardContext();
+  const { themeName, pressedKeys, pressKey, releaseKey, triggerPointerHaptic, activeKeyCode, lastTypedInfo } = useKeyboardContext();
   const isPressed = keyCode ? pressedKeys.has(keyCode) : false;
+  const isActive = keyCode ? keyCode === activeKeyCode : false;
+  const isLastTyped = keyCode ? lastTypedInfo?.code === keyCode : false;
+  const lastTypedCorrect = isLastTyped && lastTypedInfo?.correct === true;
+  const lastTypedIncorrect = isLastTyped && lastTypedInfo?.correct === false;
   const keyVariantSlot = resolveKeyVariant(themeName, keyCode);
   const keyVariant = KEYBOARD_THEMES[themeName].variants[keyVariantSlot];
 
@@ -729,6 +747,15 @@ function Key({
             color: keyVariant.text,
           }}
         >
+          {lastTypedCorrect && (
+            <div className="absolute inset-0 rounded-[5px] bg-green-400/40 pointer-events-none" />
+          )}
+          {lastTypedIncorrect && (
+            <div className="absolute inset-0 rounded-[5px] bg-red-500/40 pointer-events-none" />
+          )}
+          {isActive && !isLastTyped && (
+            <div className="absolute inset-0 rounded-[5px] bg-white/15 pointer-events-none" />
+          )}
           {children}
         </div>
 
