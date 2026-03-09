@@ -11,39 +11,30 @@ function charToKeyCode(char: string): string | null {
   return null;
 }
 
-const WORD_LIST = [
-  "the", "be", "to", "of", "and", "a", "in", "that", "have", "it",
-  "for", "not", "on", "with", "he", "as", "you", "do", "at", "this",
-  "but", "his", "by", "from", "they", "we", "say", "her", "she", "or",
-  "an", "will", "my", "one", "all", "would", "there", "their", "what",
-  "so", "up", "out", "if", "about", "who", "get", "which", "go", "me",
-  "when", "make", "can", "like", "time", "no", "just", "him", "know",
-  "take", "people", "into", "year", "your", "good", "some", "could",
-  "them", "see", "other", "than", "then", "now", "look", "only", "come",
-  "its", "over", "think", "also", "back", "after", "use", "two", "how",
-  "our", "work", "first", "well", "way", "even", "new", "want", "because",
-  "any", "these", "give", "day", "most", "us", "great", "large", "often",
-  "hand", "high", "place", "hold", "turn", "water", "word", "always",
-  "put", "thing", "little", "let", "where", "stop", "air", "eye",
-  "open", "last", "through", "need", "should", "mountain", "find",
-  "write", "move", "live", "play", "show", "grow", "form", "real",
-  "feel", "help", "land", "side", "feet", "mile", "long", "near",
-  "next", "tree", "city", "road", "keep", "face", "book", "light",
-  "world", "still", "those", "never", "every", "three", "small", "start",
-  "must", "right", "same", "tell", "does", "set", "another", "under",
-  "left", "along", "might", "while", "house", "above", "down", "side",
-  "been", "know", "place", "years", "live", "every", "found", "still",
-  "should", "between", "stand", "own", "page", "got", "earth", "answer",
-  "study", "learn", "plant", "cover", "food", "sun", "four", "between",
+const STORIES = [
+  "It was a bright cold day in April and the clocks were striking thirteen. Winston Smith his chin nuzzled into his breast in an effort to escape the vile wind slipped quickly through the glass doors of Victory Mansions though not quickly enough to prevent a swirl of gritty dust from entering along with him.",
+  "Call me Ishmael. Some years ago never mind how long precisely having little money in my pocket and nothing particular to interest me on shore I thought I would sail about a little and see the watery part of the world. It is a way I have of driving off the spleen and regulating the circulation.",
+  "It is a truth universally acknowledged that a single man in possession of a good fortune must be in want of a wife. However little known the feelings or views of such a man may be on his first entering a neighbourhood this truth is so well fixed in the minds of the surrounding families that he is considered as the rightful property of some one or other of their daughters.",
+  "All happy families are alike each unhappy family is unhappy in its own way. Everything was in confusion in the Oblonskys house. The wife had discovered that the husband was carrying on an intrigue with a French girl who had been a governess in their family and she had announced to her husband that she could not go on living in the same house with him.",
+  "The sky above the port was the color of television tuned to a dead channel. It was raining when Molly came back from the dead. Case had never seen anyone get the Simstim recordings burned out of them like that before and he had seen a lot of things in the Sprawl.",
+  "In the beginning God created the heavens and the earth. Now the earth was formless and empty darkness was over the surface of the deep and the Spirit of God was hovering over the waters. And God said let there be light and there was light. God saw that the light was good and he separated the light from the darkness.",
+  "Mr and Mrs Dursley of number four Privet Drive were proud to say that they were perfectly normal thank you very much. They were the last people you would expect to be involved in anything strange or mysterious because they just did not hold with such nonsense.",
+  "The man in black fled across the desert and the gunslinger followed. The desert was the apotheosis of all deserts huge standing to the sky for what looked like eternity in all directions. It was white and blinding and waterless and without feature save for the faint track that wound its way through the blinding sand.",
+  "Many years later as he faced the firing squad Colonel Aureliano Buendia was to remember that distant afternoon when his father took him to discover ice. At that time Macondo was a village of twenty adobe houses built on the bank of a river of clear water that ran along a bed of polished stones which were white and enormous like prehistoric eggs.",
+  "It was the best of times it was the worst of times it was the age of wisdom it was the age of foolishness it was the epoch of belief it was the epoch of incredulity it was the season of Light it was the season of Darkness it was the spring of hope it was the winter of despair.",
 ];
 
 type Duration = 15 | 30 | 60;
 type ColorMode = "light" | "dark" | "auto";
 
 function generateWords(count: number): string[] {
-  return Array.from({ length: count }, () =>
-    WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)]
-  );
+  const story = STORIES[Math.floor(Math.random() * STORIES.length)];
+  const words = story.toLowerCase().replace(/[^a-z\s]/g, "").split(/\s+/).filter(Boolean);
+  const result: string[] = [];
+  while (result.length < count) {
+    result.push(...words);
+  }
+  return result.slice(0, count);
 }
 
 export default function TypingTest() {
