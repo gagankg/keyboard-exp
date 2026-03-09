@@ -249,14 +249,14 @@ export default function TypingTest() {
             isDark ? "text-white/35" : "text-black/35"
           )}
         >
-          TYPR / BY{" "}
+          KEYBOARD / BY{" "}
           <a
             href="https://typr.aswin.fyi/"
             target="_blank"
             rel="noopener noreferrer"
             className="underline underline-offset-2"
           >
-            ASWINASOK
+            GAGAN
           </a>
         </p>
       </header>
