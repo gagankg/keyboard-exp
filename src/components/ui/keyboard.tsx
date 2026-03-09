@@ -687,7 +687,7 @@ function Key({
   };
 
   const handlePointerRelease = () => {
-    if (!keyCode || !isPressed) {
+    if (!keyCode) {
       return;
     }
 
