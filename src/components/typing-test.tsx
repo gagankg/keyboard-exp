@@ -4,6 +4,13 @@ import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { Keyboard, type KeyboardThemeName } from "@/components/ui/keyboard";
 import { cn } from "@/lib/utils";
 
+function charToKeyCode(char: string): string | null {
+  if (char === " ") return "Space";
+  const lower = char.toLowerCase();
+  if (lower >= "a" && lower <= "z") return `Key${lower.toUpperCase()}`;
+  return null;
+}
+
 const WORD_LIST = [
   "the", "be", "to", "of", "and", "a", "in", "that", "have", "it",
   "for", "not", "on", "with", "he", "as", "you", "do", "at", "this",
@@ -52,12 +59,21 @@ export default function TypingTest() {
   const [colorMode, setColorMode] = useState<ColorMode>("dark");
   const [soundEnabled, setSoundEnabled] = useState(true);
 
+  const [lastTypedInfo, setLastTypedInfo] = useState<{ code: string; correct: boolean } | null>(null);
+
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const lastTypedTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const cursorRef = useRef<HTMLSpanElement>(null);
   const textClipRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const fullText = useMemo(() => words.join(" "), [words]);
   const currentPos = typed.length;
+
+  const activeKeyCode = useMemo(() => {
+    if (!fullText || currentPos >= fullText.length) return null;
+    return charToKeyCode(fullText[currentPos]);
+  }, [fullText, currentPos]);
 
   const wordPositions = useMemo(() => {
     const positions: number[] = [];
@@ -105,6 +121,18 @@ export default function TypingTest() {
   // Initialize words on client only (avoids SSR/CSR Math.random() mismatch)
   useEffect(() => {
     setWords(generateWords(150));
+  }, []);
+
+  // Keep the hidden input focused so window keydown events fire reliably
+  useEffect(() => {
+    inputRef.current?.focus({ preventScroll: true });
+  }, []);
+
+  // Cleanup lastTyped timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (lastTypedTimeoutRef.current) clearTimeout(lastTypedTimeoutRef.current);
+    };
   }, []);
 
   // Timer
@@ -164,6 +192,10 @@ export default function TypingTest() {
         setWrongWordSet((prev) => new Set([...prev, wordIdx]));
       }
 
+      if (lastTypedTimeoutRef.current) clearTimeout(lastTypedTimeoutRef.current);
+      setLastTypedInfo({ code: e.code, correct: isCorrect });
+      lastTypedTimeoutRef.current = setTimeout(() => setLastTypedInfo(null), 400);
+
       setTyped((prev) => [...prev, e.key]);
     };
 
@@ -205,7 +237,16 @@ export default function TypingTest() {
         "min-h-screen transition-colors",
         isDark ? "bg-[#191919] text-white" : "bg-[#f0efec] text-black"
       )}
+      onClick={() => inputRef.current?.focus({ preventScroll: true })}
     >
+      {/* Hidden input keeps focus so window keydown fires reliably */}
+      <input
+        ref={inputRef}
+        className="sr-only"
+        readOnly
+        aria-hidden="true"
+        tabIndex={-1}
+      />
       {/* Header */}
       <header className="px-8 pt-7 pb-5">
         <p
@@ -490,6 +531,8 @@ export default function TypingTest() {
             theme={keyboardTheme}
             enableSound={soundEnabled}
             enableHaptics
+            activeKeyCode={activeKeyCode ?? undefined}
+            lastTypedInfo={lastTypedInfo ?? undefined}
           />
         </div>
       </div>
