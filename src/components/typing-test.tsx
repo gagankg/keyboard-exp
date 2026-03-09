@@ -254,7 +254,7 @@ export default function TypingTest() {
         >
           KEYBOARD / BY{" "}
           <a
-            href="https://typr.aswin.fyi/"
+            href="https://gagankg.com/"
             target="_blank"
             rel="noopener noreferrer"
             className="underline underline-offset-2"
