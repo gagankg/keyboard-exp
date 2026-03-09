@@ -124,6 +124,20 @@
     @apply bg-background text-foreground;
   }
   html {
-    @apply font-sans;
+    @apply font-mono;
   }
+}
+
+@keyframes cursor-blink {
+  0%, 100% { border-color: currentColor; }
+  50% { border-color: transparent; }
+}
+
+.cursor-blink {
+  animation: cursor-blink 1s step-end infinite;
+}
+
+/* Override font-mono to use JetBrains Mono */
+@theme inline {
+  --font-mono: var(--font-mono);
 }
