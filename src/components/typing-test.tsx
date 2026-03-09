@@ -156,7 +156,10 @@ export default function TypingTest() {
   // Scroll cursor into view by setting scrollTop on the clip container
   useEffect(() => {
     if (!cursorRef.current || !textClipRef.current) return;
-    const cursorTop = cursorRef.current.offsetTop;
+    const cursorTop =
+      cursorRef.current.getBoundingClientRect().top -
+      textClipRef.current.getBoundingClientRect().top +
+      textClipRef.current.scrollTop;
     const lineHeight = 32; // matches leading-8
     textClipRef.current.scrollTop = Math.max(0, cursorTop - lineHeight);
   }, [currentPos]);
